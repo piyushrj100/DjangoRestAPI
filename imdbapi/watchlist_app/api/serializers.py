@@ -8,7 +8,8 @@ class ReviewSerializer(serializers.ModelSerializer) :
     
     class Meta :
         model = Review 
-        fields = "__all__" 
+        exclude = ('watchlist',)
+        # fields = "__all__" 
 class WatchlistSerializer(serializers.ModelSerializer) :
     len_name = serializers.SerializerMethodField() 
     reviews = ReviewSerializer(many=True, read_only =True)
@@ -27,10 +28,10 @@ class WatchlistSerializer(serializers.ModelSerializer) :
 
 
 
-class StreamPlatformSerializer(serializers.HyperlinkedModelSerializer) :
-    url = serializers.HyperlinkedIdentityField(view_name="stream-detail")
+# class StreamPlatformSerializer(serializers.HyperlinkedModelSerializer) :
+    # url = serializers.HyperlinkedIdentityField(view_name="stream-detail")
     # watchlist = WatchlistSerializer(many=True, read_only = True)
-    watchlist = serializers.StringRelatedField(many=True)  # this will use the model and use the __str__ method to return the field
+    # watchlist = serializers.StringRelatedField(many=True)  # this will use the model and use the __str__ method to return the field
     #We will be using the hyperlinked related field so that clicking on it will take us to the actual movies. 
 
     # watchlist = serializers.HyperlinkedRelatedField(
@@ -38,7 +39,8 @@ class StreamPlatformSerializer(serializers.HyperlinkedModelSerializer) :
     #     read_only=True,
     #     view_name='movie-detail'
     # )
-
+class StreamPlatformSerializer(serializers.ModelSerializer) :
+    watchlist = WatchlistSerializer(many=True, read_only = True)
     class Meta :
         model = StreamPlatform
         fields = "__all__"
