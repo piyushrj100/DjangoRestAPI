@@ -1,11 +1,8 @@
 
 from django.shortcuts import get_object_or_404
-
-
 from .serializers import StreamPlatformSerializer
 from ..models import Watchlist, StreamPlatform,Review
 from watchlist_app.api.serializers import WatchlistSerializer, ReviewSerializer
-
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -63,6 +60,7 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView) :
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [IsReviewUserOrReadOnly]
+    
 
 '''
 class ReviewDetail(mixins.RetrieveModelMixin, generics.GenericAPIView) :
@@ -113,49 +111,49 @@ class StreamPlatformVS(viewsets.ModelViewSet) :
     serializer_class = StreamPlatformSerializer
     permission_classes = [IsAdminOrReadOnly]
     
-class StreamPlatformAV(APIView) :
-    permission_classes = [IsAdminOrReadOnly]
-    def get(self,request) :
-        platform = StreamPlatform.objects.all()
-        serializer = StreamPlatformSerializer(platform,many=True,context={'request' : request})
-        return Response(serializer.data)
+# class StreamPlatformAV(APIView) :
+#     permission_classes = [IsAdminOrReadOnly]
+#     def get(self,request) :
+#         platform = StreamPlatform.objects.all()
+#         serializer = StreamPlatformSerializer(platform,many=True,context={'request' : request})
+#         return Response(serializer.data)
     
-    def post(self,request) :
-        serializer = StreamPlatformSerializer(data=request.data) 
-        if serializer.is_valid() :
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+#     def post(self,request) :
+#         serializer = StreamPlatformSerializer(data=request.data) 
+#         if serializer.is_valid() :
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors)
 
 
 
 
-class StreamPlatformDetailAV(APIView) :
-    permission_classes = [IsAdminOrReadOnly]
-    def get(self,request,pk) :
-        try :
-            platform = StreamPlatform.objects.get(pk=pk)
-        except StreamPlatform.DoesNotExist :
-            return Response({'Error': 'Movie not found'}, status=status.HTTP_404_NOT_FOUND) 
-        serializer = StreamPlatformSerializer(platform,context={'request': request})
-        return Response(serializer.data)
+# class StreamPlatformDetailAV(APIView) :
+#     permission_classes = [IsAdminOrReadOnly]
+#     def get(self,request,pk) :
+#         try :
+#             platform = StreamPlatform.objects.get(pk=pk)
+#         except StreamPlatform.DoesNotExist :
+#             return Response({'Error': 'Movie not found'}, status=status.HTTP_404_NOT_FOUND) 
+#         serializer = StreamPlatformSerializer(platform,context={'request': request})
+#         return Response(serializer.data)
     
-    def put(self,request,pk) :
-        platform = StreamPlatform.objects.get(pk=pk)
-        serializer = StreamPlatformSerializer(platform,data=request.data)  #movie data aslo needs to be included as it will be updated.
-        if serializer.is_valid() :
-            serializer.save()
-            return Response(serializer.data)
-        else:
-             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+#     def put(self,request,pk) :
+#         platform = StreamPlatform.objects.get(pk=pk)
+#         serializer = StreamPlatformSerializer(platform,data=request.data)  #movie data aslo needs to be included as it will be updated.
+#         if serializer.is_valid() :
+#             serializer.save()
+#             return Response(serializer.data)
+#         else:
+#              return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
-    def delete(self,request,pk) :
-        try :
-            platform = StreamPlatform.objects.get(pk=pk)
-        except StreamPlatform.DoesNotExist :
-            return Response({'Error': 'Movie not found'}, status=status.HTTP_404_NOT_FOUND) 
-        platform.delete()
-        return Response(status.HTTP_204_NO_CONTENT)
+#     def delete(self,request,pk) :
+#         try :
+#             platform = StreamPlatform.objects.get(pk=pk)
+#         except StreamPlatform.DoesNotExist :
+#             return Response({'Error': 'Movie not found'}, status=status.HTTP_404_NOT_FOUND) 
+#         platform.delete()
+#         return Response(status.HTTP_204_NO_CONTENT)
 
 
 
