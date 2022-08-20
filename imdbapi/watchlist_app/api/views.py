@@ -12,6 +12,9 @@ from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly
 from .permissions import  IsAdminOrReadOnly, IsReviewUserOrReadOnly
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle, ScopedRateThrottle
+from .throttling import ReviewCreateThrottle, ReviewListThrottle
+
 
 
 
@@ -22,6 +25,8 @@ class ReviewList(generics.ListCreateAPIView) :
     # queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     # permission_classes = [IsAuthenticated]
+    throttle_classes = [AnonRateThrottle, ReviewListThrottle]
+
 
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -30,6 +35,7 @@ class ReviewList(generics.ListCreateAPIView) :
 class ReviewCreate(generics.CreateAPIView) :
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated]
+    throttle_classes = [ReviewCreateThrottle]
 
     def get_queryset(self) :
 
@@ -60,6 +66,9 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView) :
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [IsReviewUserOrReadOnly]
+
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'review-detail'
     
 
 '''
