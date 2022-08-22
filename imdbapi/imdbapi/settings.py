@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
+
 """
 
 from pathlib import Path
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'watchlist_app',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',
     
 ]
 
@@ -133,6 +135,9 @@ STATIC_URL = 'static/'
 
 # Basic authentication only used for testing purpose. 
 REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
 
     #     'DEFAULT_PERMISSION_CLASSES' : [
 #         'rest_framework.permissions.IsAuthenticated',
@@ -147,18 +152,23 @@ REST_FRAMEWORK = {
     #     'rest_framework.throttling.UserRateThrottle'
     # ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '2/day',
-        'user': '3/day',
-        'review-create' : '1/day',
-        'review-list' : '10/day',
-        'review-detail' : '2/day'
+        'anon': '200/day',
+        'user': '300/day',
+        'review-create' : '1000/day',
+        'review-list' : '1000/day',
+        'review-detail' : '200/day'
     },
     
     'DEFAULT_AUTHENTICATION_CLASSES': [
     # 'rest_framework.authentication.BasicAuthentication',
     'rest_framework.authentication.TokenAuthentication',
     # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+    
         ],
+
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    # 'PAGE_SIZE': 3,
+   
 
 }
 

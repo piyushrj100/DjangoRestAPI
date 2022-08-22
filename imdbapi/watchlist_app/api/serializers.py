@@ -12,8 +12,9 @@ class ReviewSerializer(serializers.ModelSerializer) :
         exclude = ('watchlist',)
         # fields = "__all__" 
 class WatchlistSerializer(serializers.ModelSerializer) :
-    len_name = serializers.SerializerMethodField() 
-    reviews = ReviewSerializer(many=True, read_only =True)
+    # len_name = serializers.SerializerMethodField() 
+    # reviews = ReviewSerializer(many=True, read_only =True)
+    platform = serializers.CharField(source='platform.name')
     class Meta :
         model =Watchlist
         fields = "__all__"

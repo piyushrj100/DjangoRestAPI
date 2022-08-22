@@ -1,12 +1,15 @@
-from django.urls import path, include 
+from django.urls import path, include
+# from imdbapi.watchlist_app.api.views import WatchList 
 
 # from watchlist_app.api.views import movie_list ,movie_details
 from watchlist_app.api.views import (WatchDetailAV ,
  WatchListAV, 
+ UserReview,
 #  StreamPlatformAV,
 #  StreamPlatformDetailAV,
  ReviewList,ReviewDetail,
  ReviewCreate,
+ WatchListLAV,
  StreamPlatformVS)
 
 from rest_framework.routers import DefaultRouter
@@ -29,5 +32,8 @@ urlpatterns = [
     
     # path('review/',ReviewList.as_view(), name = 'review-list'),
     # path('review/<int:pk>/',ReviewDetail.as_view(), name = 'review-detail'),
+
+    path('reviews/',UserReview.as_view(), name = 'user-review-detail'),
+    path('list2/',WatchListLAV.as_view(), name = 'watch-list'),
 
 ]

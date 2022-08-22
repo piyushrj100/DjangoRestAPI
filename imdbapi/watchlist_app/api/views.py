@@ -14,6 +14,24 @@ from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly
 from .permissions import  IsAdminOrReadOnly, IsReviewUserOrReadOnly
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle, ScopedRateThrottle
 from .throttling import ReviewCreateThrottle, ReviewListThrottle
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
+from .pagination import WatchListPagination, WatchListLOPagination, WatchListCPagination
+ 
+
+class UserReview(generics.ListAPIView) :
+    serializer_class = ReviewSerializer
+    # throttle_classes = [ReviewListThrottle, AnonRateThrottle]
+
+    # def get_queryset(self) :
+    #     username = self.kwargs['username']
+    #     return Review.objects.filter(review_user__username=username)
+    
+    def get_queryset(self) :
+        #map the parameters instead of mapping the value.
+        username = self.request.query_params.get('username', None)
+
+        return Review.objects.filter(review_user__username=username)
 
 
 
@@ -21,11 +39,15 @@ from .throttling import ReviewCreateThrottle, ReviewListThrottle
 
 
 
-class ReviewList(generics.ListCreateAPIView) :
+
+class ReviewList(generics.ListAPIView) :
     # queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     # permission_classes = [IsAuthenticated]
     throttle_classes = [AnonRateThrottle, ReviewListThrottle]
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['review_user__username','active']
 
 
     def get_queryset(self):
@@ -166,6 +188,33 @@ class StreamPlatformVS(viewsets.ModelViewSet) :
 
 
 
+class WatchListLAV(generics.ListAPIView) :
+    queryset = Watchlist.objects.all()
+    serializer_class = WatchlistSerializer
+    
+    # filter_backends = [DjangoFilterBackend]
+    # filterset_fields = ['platform__name','title'] # will match exact keyword
+    # filter_backends = [filters.SearchFilter]
+    # search_fields  = ['title', 'platform__name']
+    # search_fields  = ['=title', '=platform__name'] # will search exact
+
+    #Ordering
+    # filter_backends = [filters.OrderingFilter]
+    # ordering_fields = [ '-avg_rating']
+    # pagination_class = WatchListPagination
+    pagination_class =WatchListCPagination
+
+
+    '''
+The search behavior may be restricted by prepending various characters to the search_fields.
+
+'^' Starts-with search.
+'=' Exact matches.
+'@' Full-text search. (Currently only supported Django's PostgreSQL backend.)
+'$' Regex search.
+   
+    '''
+        
 class WatchListAV(APIView)  :
     permission_classes = [IsAdminOrReadOnly]
 
