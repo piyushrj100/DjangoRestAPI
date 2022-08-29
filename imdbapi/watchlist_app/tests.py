@@ -65,7 +65,7 @@ class WatchListTestCase(APITestCase) :
         self.assertEqual(models.Watchlist.objects.get().title,'Example Movie')
         self.assertEqual(models.Watchlist.objects.count(), 1)
  
-class ReviewTestCase :
+class ReviewTestCase(APITestCase) :
 
     def setUp(self) :
         self.user = User.objects.create_user(username="example",password="Password@123")
@@ -85,6 +85,8 @@ class ReviewTestCase :
         }
         response = self.client.post(reverse('review-create', args=(self.watchlist.id,)),data)
         self.assertEqual(response.status_code,status.HTTP_201_CREATED)
+        
+        
 
 
 
