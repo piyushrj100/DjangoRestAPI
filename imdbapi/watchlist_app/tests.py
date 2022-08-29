@@ -74,6 +74,10 @@ class ReviewTestCase(APITestCase) :
 
         self.stream = models.StreamPlatform.objects.create(name="Netflix",about ="#1 Streaming Platform", website="https://netflix.com")
         self.watchlist = models.Watchlist.objects.create(platform=self.stream, title="Example Movie",description="Example",active=True)
+
+        self.watchlist2 = models.Watchlist.objects.create(platform=self.stream, title="Example Movie 2",description="Example 2",active=True)
+
+        self.review = models.Review.objects.create(review_user=self.user,rating=5,description="Updated review",watchlist=self.watchlist2,active=True)
     
     def test_review_create(self) :
         data = {
@@ -85,7 +89,40 @@ class ReviewTestCase(APITestCase) :
         }
         response = self.client.post(reverse('review-create', args=(self.watchlist.id,)),data)
         self.assertEqual(response.status_code,status.HTTP_201_CREATED)
+        self.assertEqual(models.Review.objects.count(),2)
+        # self.assertEqual(models.Review.objects.get().rating,5)
+
+        response = self.client.post(reverse('review-create', args=(self.watchlist.id,)),data)
+        self.assertEqual(response.status_code,status.HTTP_400_BAD_REQUEST)
+
+    
+    def test_review_create_unauth(self) :
+        data = {
+            "review_user" : self.user,
+            "rating" : 5,
+            "description" :"Great Movie!",
+            "watchlist": self.watchlist,
+            "active": True
+        }
+
+        self.client.force_authenticate(user=None,token=None)
+        response = self.client.post(reverse('review-create', args=(self.watchlist.id,)),data)
+        self.assertEqual(response.status_code,status.HTTP_401_UNAUTHORIZED)
+    
+    def test_review_update(self) :
+        data = {
+            "review_user" : self.user,
+            "rating" : 5,
+            "description" :"Great Movie! Updated",
+            "watchlist": self.watchlist,
+            "active": True
+        }
+        response = self.client.put(reverse('review-detail', args=(self.watchlist.id,)),data)
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+
+
         
+
         
 
 
